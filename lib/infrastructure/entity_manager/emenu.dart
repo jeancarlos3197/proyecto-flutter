@@ -18,6 +18,10 @@ class emenu {
     return ec.selectMCList();
   }
 
+  Future<List<Menu>> selectMClistToday() {
+    return ec.selectMClistToday();
+  }
+
   Future<Menu> insertMC(String cod_comida, int cantidad, double precio) {
     return ec.insertMC(Menu.porDefecto(cod_comida, cantidad, precio));
   }

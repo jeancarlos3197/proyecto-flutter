@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types
 
+import 'package:flutter/cupertino.dart';
 import 'package:restauranteflutter/domain/entities/menu.dart';
 import 'package:restauranteflutter/infrastructure/controllers/conexion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,6 +29,24 @@ class cmenu {
 
     List<Menu> lista = [];
     for (var i = 0; i < listQuery.length; i++) {
+      DateTime date = DateTime.parse(listQuery[i]['fecha_actual']);
+
+      Menu menu = Menu(listQuery[i]['id'], listQuery[i]['cod_comida'],
+          listQuery[i]['cantidad'], listQuery[i]['precio'], date);
+      lista.add(menu);
+    }
+
+    return lista;
+  }
+
+  Future<List<Menu>> selectMClistToday() async {
+    var listQuery = (await supabase
+        .from('menus')
+        .select()
+        .eq('fecha_actual', DateTime.now()));
+
+    List<Menu> lista = [];
+    for (var i = 0; i < listQuery.length; i++) {
       Menu menu = Menu(
           listQuery[i]['id'],
           listQuery[i]['cod_comida'],
@@ -36,6 +55,8 @@ class cmenu {
           listQuery[i]['fecha_actual']);
       lista.add(menu);
     }
+
+    debugPrint(lista.toString());
 
     return lista;
   }

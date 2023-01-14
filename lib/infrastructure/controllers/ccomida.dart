@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types
 
+import 'package:flutter/cupertino.dart';
 import 'package:restauranteflutter/domain/entities/comida.dart';
 import 'package:restauranteflutter/infrastructure/controllers/conexion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -36,31 +37,36 @@ class ccomida {
     return lista;
   }
 
-  Future<Comida> insertCC(Comida comida) async {
+  Future<Comida?> insertCC(Comida comida) async {
     var newC = (await supabase.from('comidas').insert({
       'nombre': comida.nombre,
       'ingredientes': comida.ingredientes,
       'imagen': comida.imagen
     }));
 
-    return Comida(
-        newC['id'], newC['nombre'], newC['ingredientes'], newC['imagen']);
+    debugPrint("update Class $newC");
+
+    return null;
   }
 
-  Future<Comida> updateCC(Comida comida) async {
-    var updateC = (await supabase.from('comidas').update({
+  Future<Comida?> updateCC(Comida comida) async {
+    var updateC = await supabase.from('comidas').update({
       'nombre': comida.nombre,
       'ingredientes': comida.ingredientes,
       'imagen': comida.imagen
-    }).match({'id': comida.id}));
+    }).match({'id': comida.id});
 
-    return Comida(updateC['id'], updateC['nombre'], updateC['ingredientes'],
-        updateC['imagen']);
+    debugPrint("update Class $updateC");
+
+    return null;
   }
 
   Future<Comida> deleteCC(String codigo) async {
-    var deleteC =
-        (await supabase.from('comidas').delete().match({'id': codigo}));
+    var deleteC = (await supabase
+        .from('comidas')
+        .delete()
+        .match({'id': codigo}).maybeSingle());
+    debugPrint('delete class $deleteC');
 
     return Comida(deleteC['id'], deleteC['nombre'], deleteC['ingredientes'],
         deleteC['imagen']);

@@ -3,6 +3,8 @@
 class Comida {
   String _id = '', _nombre = '', _ingredientes = '', _imagen = '';
 
+  Comida.vacio();
+
   Comida(String id, String nombre, String ingredientes, String imagen) {
     _id = id;
     _nombre = nombre;

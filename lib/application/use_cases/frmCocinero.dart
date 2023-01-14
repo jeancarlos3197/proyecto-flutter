@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:restauranteflutter/application/use_cases/frmManComida.dart';
+import 'package:restauranteflutter/application/use_cases/frmManMenu.dart';
 
 class frmCocinero extends StatefulWidget {
   const frmCocinero({super.key});
@@ -59,7 +60,12 @@ class _frmCocinero extends State<frmCocinero> {
                         alignment: Alignment.center,
                         child: ElevatedButton(
                           onPressed: (() {
-                            debugPrint("Onclick");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const frmManMenu(),
+                              ),
+                            );
                           }),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff6a040f),

@@ -16,11 +16,11 @@ class ecomida {
     return ec.selectCCList();
   }
 
-  Future<Comida> insertCE(String nombre, String ingredientes, String imagen) {
+  Future<Comida?> insertCE(String nombre, String ingredientes, String imagen) {
     return ec.insertCC(Comida.sinId(nombre, ingredientes, imagen));
   }
 
-  Future<Comida> updateCE(
+  Future<Comida?> updateCE(
       String id, String nombre, String ingredientes, String imagen) {
     return ec.updateCC(Comida(id, nombre, ingredientes, imagen));
   }

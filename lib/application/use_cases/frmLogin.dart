@@ -22,6 +22,8 @@ class _frmLogin extends State<frmLogin> {
   final logueo = TextEditingController();
   final clave = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,149 +34,186 @@ class _frmLogin extends State<frmLogin> {
             backgroundColor: Color(0xff6a040f),
           ),
           SliverGrid(
-              delegate: SliverChildListDelegate(
-                [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset('assets/user_login.png', width: 150),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          controller: logueo,
-                          decoration: InputDecoration(
-                            hintText: 'Usuario',
-                            icon: const Icon(
-                              Icons.person,
+            delegate: SliverChildListDelegate(
+              [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Image.asset('assets/user_login.png', width: 150),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: TextField(
+                        controller: logueo,
+                        decoration: InputDecoration(
+                          hintText: 'Usuario',
+                          icon: const Icon(
+                            Icons.person,
+                            color: Color(0xfffaa307),
+                          ),
+                          fillColor: const Color(0xfffaa307),
+                          contentPadding: const EdgeInsets.all(15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
                               color: Color(0xfffaa307),
                             ),
-                            fillColor: const Color(0xfffaa307),
-                            contentPadding: const EdgeInsets.all(15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Color(0xfffaa307),
-                              ),
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
+                            borderRadius: BorderRadius.circular(25.0),
                           ),
-                          onChanged: (value) {},
                         ),
+                        onChanged: (value) {},
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          controller: clave,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: 'Contraseña',
-                            icon: const Icon(
-                              Icons.lock,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: TextField(
+                        controller: clave,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Contraseña',
+                          icon: const Icon(
+                            Icons.lock,
+                            color: Color(0xfffaa307),
+                          ),
+                          fillColor: const Color(0xfffaa307),
+                          contentPadding: const EdgeInsets.all(15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
                               color: Color(0xfffaa307),
                             ),
-                            fillColor: const Color(0xfffaa307),
-                            contentPadding: const EdgeInsets.all(15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Color(0xfffaa307),
-                              ),
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
+                            borderRadius: BorderRadius.circular(25.0),
                           ),
-                          onChanged: (value) {},
                         ),
+                        onChanged: (value) {},
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        margin: const EdgeInsets.only(left: 15, right: 15),
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: (() async {
-                            Future<TipoUsuario> rolUsuario =
-                                cn.selectLoginE(logueo.text, clave.text);
-                            rolUsuario.then(
-                              (value) => {
-                                if (value.nombre.contains('administrador'))
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const frmAdmin(),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.only(left: 15, right: 15),
+                      alignment: Alignment.center,
+                      child: ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : (() async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                Future<TipoUsuario> rolUsuario =
+                                    cn.selectLoginE(logueo.text, clave.text);
+                                rolUsuario.then(
+                                  (value) => {
+                                    const Center(
+                                      child: CircularProgressIndicator(),
                                     ),
-                                  )
-                                else if (value.nombre.contains('vacio'))
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text(
-                                            'Error de logueo',
-                                            textScaleFactor: 1,
+                                    if (value.nombre.contains('administrador'))
+                                      {
+                                        setState(() {
+                                          _isLoading = false;
+                                        }),
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const frmAdmin(),
                                           ),
-                                          content: const SingleChildScrollView(
-                                              child: Text(
-                                            'Campos incorrectos',
-                                            textScaleFactor: 1,
-                                          )),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                logueo.clear();
-                                                clave.clear();
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Aceptar'),
-                                            ),
-                                          ],
-                                        );
-                                      })
-                                else if (value.nombre.contains('cocinero'))
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const frmCocinero(),
-                                    ),
-                                  )
-                                else if (value.nombre.contains('mesero'))
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const frmMozo(),
-                                    ),
-                                  )
-                              },
-                            );
-                          }),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff6a040f),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                                        ),
+                                      }
+                                    else if (value.nombre.contains('vacio'))
+                                      {
+                                        setState(() {
+                                          _isLoading = false;
+                                        }),
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                  'Error de logueo',
+                                                  textScaleFactor: 1,
+                                                ),
+                                                content:
+                                                    const SingleChildScrollView(
+                                                        child: Text(
+                                                  'Campos incorrectos',
+                                                  textScaleFactor: 1,
+                                                )),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      logueo.clear();
+                                                      clave.clear();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child:
+                                                        const Text('Aceptar'),
+                                                  ),
+                                                ],
+                                              );
+                                            })
+                                      }
+                                    else if (value.nombre.contains('cocinero'))
+                                      {
+                                        setState(() {
+                                          _isLoading = false;
+                                        }),
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const frmCocinero(),
+                                          ),
+                                        )
+                                      }
+                                    else if (value.nombre.contains('mesero'))
+                                      {
+                                        setState(() {
+                                          _isLoading = false;
+                                        }),
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const frmMozo(),
+                                          ),
+                                        )
+                                      }
+                                  },
+                                );
+                              }),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff6a040f),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
                           ),
-                          child: const Text('Login'),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text('Login'),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 500,
-                mainAxisSpacing: 50,
-                crossAxisSpacing: 300,
-              ))
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 500,
+              mainAxisSpacing: 50,
+              crossAxisSpacing: 300,
+            ),
+          ),
         ],
       ),
     );

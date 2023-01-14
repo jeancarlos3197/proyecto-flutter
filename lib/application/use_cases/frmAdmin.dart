@@ -1,6 +1,8 @@
 // ignore_for_file: camel_case_types, file_names
 
 import 'package:flutter/material.dart';
+import 'package:restauranteflutter/application/use_cases/frmManComida.dart';
+import 'package:restauranteflutter/application/use_cases/frmManMenu.dart';
 
 class frmAdmin extends StatefulWidget {
   const frmAdmin({super.key});
@@ -53,7 +55,12 @@ class _frmAdmin extends State<frmAdmin> {
                         alignment: Alignment.center,
                         child: ElevatedButton(
                           onPressed: (() {
-                            debugPrint("Onclick");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const frmManComida(),
+                              ),
+                            );
                           }),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff6a040f),
@@ -65,7 +72,7 @@ class _frmAdmin extends State<frmAdmin> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          child: const Text('Mantenimiento comida'),
+                          child: const Text('Mantenimiento comidas'),
                         ),
                       ),
                       Container(
@@ -74,7 +81,12 @@ class _frmAdmin extends State<frmAdmin> {
                         alignment: Alignment.center,
                         child: ElevatedButton(
                           onPressed: (() {
-                            debugPrint("Onclick");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const frmManMenu(),
+                              ),
+                            );
                           }),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff6a040f),
@@ -86,7 +98,7 @@ class _frmAdmin extends State<frmAdmin> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          child: const Text('Mantenimiento menu'),
+                          child: const Text('Mantenimiento menús'),
                         ),
                       ),
                       Container(

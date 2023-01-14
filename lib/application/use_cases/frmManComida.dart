@@ -1,7 +1,9 @@
 // ignore_for_file: camel_case_types, file_names
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restauranteflutter/application/use_cases/frmManComidaEdit.dart';
+import 'package:restauranteflutter/application/use_cases/frmManComidaNew.dart';
+import 'package:restauranteflutter/domain/entities/comida.dart';
 import 'package:restauranteflutter/infrastructure/entity_manager/ecomida.dart';
 
 class frmManComida extends StatefulWidget {
@@ -12,7 +14,30 @@ class frmManComida extends StatefulWidget {
 }
 
 class _frmManComidaState extends State<frmManComida> {
+  List<Comida> items = [];
+
   ecomida cn = ecomida();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    await cn.selectCEList().then((value) {
+      setState(() {
+        items = value;
+      });
+    });
+  }
+
+  void _navigateToOtherPage(BuildContext context, String id) async {
+    await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => frmManComidaEdit(id: id)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,57 +54,50 @@ class _frmManComidaState extends State<frmManComida> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: FutureBuilder(
-                        future: cn.selectCEList(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ListView.builder(
-                              itemCount: snapshot.data?.length,
-                              itemBuilder: ((context, index) {
-                                return Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
-                                    margin: const EdgeInsets.all(15),
-                                    elevation: 10,
+                        child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: ((context, index) {
+                        return InkWell(
+                          onTap: () async {
+                            debugPrint('Id: ${items[index].id}');
+                            _navigateToOtherPage(context, items[index].id);
+                            setState(() {});
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            margin: const EdgeInsets.all(15),
+                            elevation: 10,
 
-                                    // Dentro de esta propiedad usamos ClipRRect
-                                    child: ClipRRect(
-                                      // Los bordes del contenido del card se cortan usando BorderRadius
-                                      borderRadius: BorderRadius.circular(30),
+                            // Dentro de esta propiedad usamos ClipRRect
+                            child: ClipRRect(
+                              // Los bordes del contenido del card se cortan usando BorderRadius
+                              borderRadius: BorderRadius.circular(30),
 
-                                      // EL widget hijo que será recortado segun la propiedad anterior
-                                      child: Column(
-                                        children: <Widget>[
-                                          // Usamos el widget Image para mostrar una imagen
-                                          FadeInImage(
-                                            placeholder: const AssetImage(
-                                                'assets/loading.gif'),
-                                            // Como queremos traer una imagen desde un url usamos NetworkImage
-                                            image: NetworkImage(
-                                                snapshot.data![index].imagen),
-                                          ),
+                              // EL widget hijo que será recortado segun la propiedad anterior
+                              child: Column(
+                                children: <Widget>[
+                                  // Usamos el widget Image para mostrar una imagen
+                                  FadeInImage(
+                                    placeholder:
+                                        const AssetImage('assets/loading.gif'),
+                                    // Como queremos traer una imagen desde un url usamos NetworkImage
+                                    image: NetworkImage(items[index].imagen),
+                                  ),
 
-                                          // Usamos Container para el contenedor de la descripción
-                                          Container(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                                snapshot.data![index].nombre),
-                                          ),
-                                        ],
-                                      ),
-                                    ));
-                                ;
-                              }),
-                            );
-                          } else {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        },
-                      ),
-                    )
+                                  // Usamos Container para el contenedor de la descripción
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(items[index].nombre),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ))
                   ],
                 )
               ]),
@@ -91,7 +109,11 @@ class _frmManComidaState extends State<frmManComida> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const frmManComidaNew()));
+          setState(() {});
+        },
         backgroundColor: const Color(0xff6a040f),
         child: const Icon(Icons.add),
       ),
